@@ -3,21 +3,53 @@ import fastify from 'fastify';
 const server = fastify();
 server.register(require('@fastify/websocket'));
 
+let connection: any = {};
+let connectionId: number = 0;
+
+/*
+ Basic idea is that we'lll have multiple connections to the server, hence
+ giving each connection an ID and saving it in the object
+
+ The IDs currently are numbers which can be proper public address of the users
+ that connect so that we know which address we want to send targeted notifications to
+ */
 server.register(async function (server) {
   // @ts-ignore
-  server.get('/ws', { websocket: true }, (connection, req) => {
-    let messageCount = 1;
-    setInterval(() => {
-      // @ts-ignore
-      connection.socket.send(
-        JSON.stringify({
-          title: `Point Notification #${messageCount}`,
-          body: `You have #${messageCount} message from WS Server`,
-        })
-      );
-      messageCount++;
-    }, 30000);
+  server.get('/ws', { websocket: true }, (conn, req) => {
+    connection[connectionId++] = conn;
+    // @TODO: Remove the connection reference if it closes
   });
+});
+
+/*
+ We post a message that we want to be broadcasted to every user
+ to this route. Example would be an event announcement
+ */
+server.post('/broadcast', async (req, res) => {
+  // @ts-ignore
+  const { title, body } = req.body;
+  Object.values(connection).forEach((conn) => {
+    // @ts-ignore
+    conn.socket.send(JSON.stringify({ title, body }));
+  });
+  return 'Broadcasted';
+});
+
+/*
+ Notifications that we want to send to a specific targetted user. 
+`For example, a user who hasn't been active for some time
+ */
+server.post('/send/:id', async (req, res) => {
+  // @ts-ignore
+  const { id } = req.params;
+  // @ts-ignore
+  const { title, body } = req.body;
+  const reqdConn = connection[id];
+  if (reqdConn) {
+    reqdConn.socket.send(JSON.stringify({ title, body }));
+    return `Sent to Connection:${id}`;
+  }
+  return `Unable to send to Connection:${id}`;
 });
 
 server.get('/', async (request, reply) => {
