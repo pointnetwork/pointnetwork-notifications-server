@@ -4,7 +4,6 @@ const server = fastify();
 server.register(require('@fastify/websocket'));
 
 let connection: any = {};
-let connectionId: number = 0;
 
 /*
  Basic idea is that we'lll have multiple connections to the server, hence
@@ -16,7 +15,8 @@ let connectionId: number = 0;
 server.register(async function (server) {
   // @ts-ignore
   server.get('/ws', { websocket: true }, (conn, req) => {
-    connection[connectionId++] = conn;
+    // @ts-ignore
+    connection[req.query.address] = conn;
     // @TODO: Remove the connection reference if it closes
   });
 });
