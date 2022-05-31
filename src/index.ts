@@ -16,7 +16,9 @@ server.register(async function (server) {
   // @ts-ignore
   server.get('/ws', { websocket: true }, (conn, req) => {
     // @ts-ignore
-    connection[req.query.address] = conn;
+    const address = req.query.address;
+    connection[address] = conn;
+    console.log(address, 'connected to WS server');
     // @TODO: Remove the connection reference if it closes
   });
 });
