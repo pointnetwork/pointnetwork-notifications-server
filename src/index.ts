@@ -3,6 +3,10 @@ import fastify from 'fastify';
 const server = fastify();
 server.register(require('@fastify/websocket'));
 
+server.register(require('@fastify/cors'), {
+  // put your options here
+});
+
 let connection: any = {};
 
 /*
@@ -28,6 +32,7 @@ server.register(async function (server) {
  to this route. Example would be an event announcement
  */
 server.post('/broadcast', async (req, res) => {
+  console.log('Broadcasting');
   // @ts-ignore
   const { title, body } = req.body;
   Object.values(connection).forEach((conn) => {
@@ -44,6 +49,7 @@ server.post('/broadcast', async (req, res) => {
 server.post('/send/:id', async (req, res) => {
   // @ts-ignore
   const { id } = req.params;
+  console.log('Sending to ', id);
   // @ts-ignore
   const { title, body } = req.body;
   const reqdConn = connection[id];
