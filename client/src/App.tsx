@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 // MUI components
 import Alert from '@mui/material/Alert';
@@ -10,6 +10,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 // Components
 import UIThemeProvider from './components/UIThemeProvider';
+// Icons
+import CircleIcon from '@mui/icons-material/Circle';
 // Typescript
 import { Notification } from './@types/interfaces';
 
@@ -23,6 +25,20 @@ function App() {
   const [form, setForm] = useState<Notification>({ ...emptyForm });
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isError, setError] = useState<boolean>(false);
+  const [connectedUsers, setConnectedUsers] = useState<number>(0);
+
+  useEffect(() => {
+    setInterval(async () => {
+      try {
+        const { data } = await axios.get(
+          'http://localhost:8080/connected-users'
+        );
+        setConnectedUsers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }, 5000);
+  }, []);
 
   const handleChange = (e: any) =>
     setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -45,6 +61,21 @@ function App() {
   return (
     <UIThemeProvider>
       <Box height='100vh' display='flex' alignItems='center'>
+        <Box
+          position='fixed'
+          top={16}
+          right={16}
+          display='flex'
+          alignItems='center'
+          borderRadius={20}
+          bgcolor='primary.light'
+          p={1}
+        >
+          <CircleIcon color='success' fontSize='small' />
+          <Typography variant='body2' ml={0.5} mr={2}>
+            {connectedUsers} Connected Users
+          </Typography>
+        </Box>
         <Container maxWidth='sm'>
           <Box display='flex'>
             <Typography fontWeight='bold' color='primary' variant='h4' mr={1}>
