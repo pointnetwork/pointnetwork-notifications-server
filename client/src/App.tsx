@@ -8,6 +8,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+// Components
+import UIThemeProvider from './components/UIThemeProvider';
 // Typescript
 import { Notification } from './@types/interfaces';
 
@@ -41,67 +43,69 @@ function App() {
   };
 
   return (
-    <Box height='100vh' display='flex' alignItems='center'>
-      <Container maxWidth='sm'>
-        <Box display='flex'>
-          <Typography fontWeight='bold' color='primary' variant='h4' mr={1}>
-            Point
+    <UIThemeProvider>
+      <Box height='100vh' display='flex' alignItems='center'>
+        <Container maxWidth='sm'>
+          <Box display='flex'>
+            <Typography fontWeight='bold' color='primary' variant='h4' mr={1}>
+              Point
+            </Typography>
+            <Typography fontWeight='bold' variant='h4'>
+              Broadcast
+            </Typography>
+          </Box>
+          <Typography mb={3}>
+            Broadcast Notifications to connected users
           </Typography>
-          <Typography fontWeight='bold' variant='h4'>
-            Broadcast
-          </Typography>
-        </Box>
-        <Typography mb={3}>
-          Broadcast Notifications to connected users
-        </Typography>
-        {isError && (
-          <Alert severity='error' variant='filled' sx={{ my: 2 }}>
-            Unable to broadcast the notification
-          </Alert>
-        )}
-        <TextField
-          id='title'
-          value={form.title}
-          onChange={handleChange}
-          label='Notification Title'
-          fullWidth
-          margin='dense'
-          size='small'
-          error={isSomeFieldsEmpty && !form.title}
-        />
-        <TextField
-          id='body'
-          value={form.body}
-          onChange={handleChange}
-          label='Notification Body'
-          fullWidth
-          margin='dense'
-          size='small'
-          error={isSomeFieldsEmpty && !form.body}
-        />
-        {isSomeFieldsEmpty && (
-          <Typography color='error' variant='body2' my={1}>
-            *Please fill in all the fields
-          </Typography>
-        )}
-        <Button
-          disabled={isLoading}
-          variant='contained'
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleSubmit}
-        >
-          {isLoading ? (
-            <>
-              <CircularProgress size={14} sx={{ mr: 1 }} />
-              Broadcasting...
-            </>
-          ) : (
-            'Broadcast'
+          {isError && (
+            <Alert severity='error' variant='filled' sx={{ my: 2 }}>
+              Unable to broadcast the notification
+            </Alert>
           )}
-        </Button>
-      </Container>
-    </Box>
+          <TextField
+            id='title'
+            value={form.title}
+            onChange={handleChange}
+            label='Notification Title'
+            fullWidth
+            margin='dense'
+            size='small'
+            error={isSomeFieldsEmpty && !form.title}
+          />
+          <TextField
+            id='body'
+            value={form.body}
+            onChange={handleChange}
+            label='Notification Body'
+            fullWidth
+            margin='dense'
+            size='small'
+            error={isSomeFieldsEmpty && !form.body}
+          />
+          {isSomeFieldsEmpty && (
+            <Typography color='error' variant='body2' my={1}>
+              *Please fill in all the fields
+            </Typography>
+          )}
+          <Button
+            disabled={isLoading}
+            variant='contained'
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={handleSubmit}
+          >
+            {isLoading ? (
+              <>
+                <CircularProgress size={14} sx={{ mr: 1 }} />
+                Broadcasting...
+              </>
+            ) : (
+              'Broadcast'
+            )}
+          </Button>
+        </Container>
+      </Box>
+    </UIThemeProvider>
   );
 }
 
