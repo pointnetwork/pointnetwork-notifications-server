@@ -23,7 +23,10 @@ server.register(async function (server) {
     const address = req.query.address;
     connection[address] = conn;
     console.log(address, 'connected to WS server');
-    // @TODO: Remove the connection reference if it closes
+    // Remove the connection reference if it closes
+    conn.socket.on('close', () => {
+      delete connection[address];
+    });
   });
 });
 
@@ -62,6 +65,10 @@ server.post('/send/:id', async (req, res) => {
 
 server.get('/', async (request, reply) => {
   return 'Hello from Point Push Notifications server';
+});
+
+server.get('/connected-users', async (req, reply) => {
+  return Object.keys(connection).length;
 });
 
 server.listen(8080, (err, address) => {
