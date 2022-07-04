@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 // MUI components
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -9,7 +10,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 // Typescript
 import { Notification } from './@types/interfaces';
-import axios from 'axios';
 
 const emptyForm: Notification = {
   title: '',
